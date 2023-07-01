@@ -24,4 +24,6 @@ ENT.Category = "Fun"
 
 ENT.MaxCapacity = 20
 ENT.ActualCapacity = 0
+ENT.NextTrash = CurTime()
+ENT.Delay = 0.1
 ENT.Trash = {}

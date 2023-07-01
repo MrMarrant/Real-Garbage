@@ -23,8 +23,20 @@ local PhysicSoundHeavy = Sound( "physics/glass/glass_bottle_break"..math.random(
 local TrowSoundGarbage = Sound( "" )
 local OpenSoundGarbage = Sound( "" )
 
+local DoorClass = {
+    prop_door_rotating = true,
+    func_door = true,
+    func_door_rotating = true
+}
+
+local function IsADoor(ent)
+	local EntClass = ent:GetClass()
+	if (DoorClass[EntClass]) then return true end
+	return false
+end
+
 function ENT:AddTrash(ent)
-	if (ent:IsPlayer() or ent:IsWorld()) then return end
+	if (ent:IsPlayer() or ent:IsWorld() or IsADoor(ent)) then return end
 
 	table.insert( self.Trash, { -- TODO : Save BodyGroup ?
 		class = ent:GetClass(),
@@ -39,16 +51,21 @@ end
 function ENT:RemoveTrash()
 	if (table.IsEmpty( self.Trash )) then return end
 
-	local TrashToRemove = self.Trash[#]
+	local TrashToRemove = self.Trash[#self.Trash]
 		
 	local TrashEnt = ents.Create( TrashToRemove.class )
-	local PosTrash = self:GetPos() + Vector(math.random(1,2), math.random(1,2), 0)
+	local PosTrash = self:GetPos() + Vector(math.random(1,2), 0, math.random(1,2))
 
 	TrashEnt:SetPos( PosTrash )
-	TrashEnt:Spawn()
 	TrashEnt:SetModel(TrashToRemove.model)
+	TrashEnt:SetModelName( TrashToRemove.model )
 	TrashEnt:Health(TrashToRemove.health)
+	TrashEnt:Spawn()
 	TrashEnt:Activate()
+	TrashEnt.DelayTrash = true
+	timer.Simple(3, function()
+		if (IsValid(TrashEnt)) then TrashEnt.DelayTrash = nil end
+	end)
 
 	self.ActualCapacity = self.ActualCapacity - 1
 	table.remove( self.Trash ) -- Remove the last element.
@@ -56,7 +73,7 @@ end
 
 
 function ENT:Initialize()
-	self:SetModel( "models/scp_207/scp_207.mdl" )
+	self:SetModel( "models/props_junk/TrashBin01a.mdl" )
 	self:RebuildPhysics()
 end
 
@@ -94,7 +111,10 @@ end
 
 -- TODO : Faire les sons de jeter en fonction du type de ce qui a été jeté ?
 function ENT:Touch(ent)
+	local CurrentTime = CurTime()
+	if (ent.DelayTrash or self.NextTrash > CurrentTime) then return end
 	if (!IsValid(ent) or self.ActualCapacity == self.MaxCapacity) then return end
+	self.NextTrash = CurrentTime + self.Delay
 
 	self:AddTrash(ent)
 	sound.Play( TrowSoundGarbage, self:GetPos(), 75, math.random( 50, 160 ) )	
