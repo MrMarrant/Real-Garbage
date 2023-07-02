@@ -73,7 +73,7 @@ end
 
 
 function ENT:Initialize()
-	self:SetModel( "models/small_garbage/small_garbage.mdl" )
+	self:SetModel( "models/props_junk/TrashBin01a.mdl" )
 	self:RebuildPhysics()
 end
 
@@ -82,7 +82,6 @@ function ENT:RebuildPhysics( )
 	self:SetMoveType(MOVETYPE_VPHYSICS)
 	self:SetSolid( SOLID_VPHYSICS ) 
 	self:SetUseType(SIMPLE_USE)
-	self:SetModelScale(1.3)
 	self:PhysWake()
 end
 
