@@ -37,29 +37,33 @@ local function IsADoor(ent)
 end
 
 function ENT:DestroyGarbage()
+	local PosTrash = self:GetPos()
+
 	for key, TrashToRemove in ipairs(self.Trash ) do
 		local TrashEnt = ents.Create( TrashToRemove.class )
-		local PosTrash = self:GetPos() + Vector(math.random(1,2), 0, math.random(1,2))
-	
+		PosTrash = PosTrash + Vector(math.random(-2,2), math.random(-2,2), math.random(1,2))
+
 		TrashEnt:SetPos( PosTrash )
 		TrashEnt:SetModel(TrashToRemove.model)
 		TrashEnt:SetModelName( TrashToRemove.model )
 		TrashEnt:Health(TrashToRemove.health)
 		TrashEnt:Spawn()
 		TrashEnt:Activate()
+
+		PosTrash = PosTrash + Vector(1, 1, 0)
 	end
 
 	local effectdata = EffectData()
 
 	effectdata:SetOrigin( self:GetPos() )
-	sound.Play( BreakSound, self:GetPos(), 75, math.random( 50, 160 ) )
+	sound.Play( OpenSoundGarbage, self:GetPos(), 75, 255 )
 	util.Effect( "ThumperDust", effectdata )
 
 	self:Remove()
 end
 
 function ENT:AddTrash(ent)
-	if (ent:IsPlayer() or ent:IsWorld() or IsADoor(ent)) then return end
+	if (ent:IsPlayer() or ent:IsWorld() or IsADoor(ent) or ent:GetClass() == self:GetClass()) then return end
 
 	table.insert( self.Trash, { -- TODO : Save BodyGroup ?
 		class = ent:GetClass(),
@@ -69,6 +73,11 @@ function ENT:AddTrash(ent)
 
 	self.ActualCapacity = self.ActualCapacity + 1
 	ent:Remove()
+
+	self:ResetSequence( "throw" )
+	timer.Simple(self:SequenceDuration(), function()
+		if (IsValid(self)) then self:ResetSequence( "idle" )  end
+	end)
 end
 
 function ENT:RemoveTrash()
@@ -92,7 +101,10 @@ function ENT:RemoveTrash()
 
 	self.ActualCapacity = self.ActualCapacity - 1
 	table.remove( self.Trash ) -- Remove the last element.
-
+	self:ResetSequence( "throw" )
+	timer.Simple(self:SequenceDuration(), function()
+		if (IsValid(self)) then self:ResetSequence( "idle" )  end
+	end)
 	sound.Play( OpenSoundGarbage, self:GetPos(), 75, math.random( 50, 160 ) )	
 end
 
@@ -107,7 +119,6 @@ function ENT:RebuildPhysics( )
 	self:SetMoveType(MOVETYPE_VPHYSICS)
 	self:SetSolid( SOLID_VPHYSICS ) 
 	self:SetUseType(SIMPLE_USE)
-	self:SetModelScale(1.3)
 	self:PhysWake()
 end
 
@@ -121,11 +132,11 @@ end
 
 function ENT:OnTakeDamage( dmginfo ) -- TODO : Exploser la poubelle si elle prend trop de dégats ?
 	local DmgReceive = dmginfo:GetDamage()
-	self.Health = math.Clamp( self.Health - DmgReceive, 0, 200 )
+	self.CurrentHealth = math.Clamp( self.CurrentHealth - DmgReceive, 0, 200 )
 	if (DmgReceive >= 5) then
 		sound.Play( HitSoundGarbage, self:GetPos(), 75, math.random( 50, 160 ) )	
 	end
-	if (self.Health <= 0) then self:DestroyGarbage() end
+	if (self.CurrentHealth <= 0) then self:DestroyGarbage() end
 end
 
 function ENT:Use(ply)
@@ -142,4 +153,11 @@ function ENT:Touch(ent)
 
 	self:AddTrash(ent)
 	sound.Play( ThrowSoundGarbage, self:GetPos(), 75, math.random( 50, 160 ) )	
+end
+
+function ENT:Think()
+    if ( SERVER ) then
+        self:NextThink( CurTime() )
+        return true 
+    end
 end

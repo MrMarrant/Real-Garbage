@@ -21,9 +21,10 @@ ENT.Author = "MrMarrant"
 ENT.PrintName = "Real Garbage"
 ENT.Spawnable = true
 ENT.Category = "Fun"
+ENT.AutomaticFrameAdvance = true
 
 ENT.MaxCapacity = 10
-ENT.Health = 200
+ENT.CurrentHealth = 10
 ENT.ActualCapacity = 0
 ENT.NextTrash = CurTime()
 ENT.Delay = 0.1
