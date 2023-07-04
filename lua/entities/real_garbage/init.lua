@@ -18,10 +18,11 @@ AddCSLuaFile("shared.lua")
 include("shared.lua")
 
 -- TODO : Trouver les sons.
-local PhysicSoundLow = Sound( "physics/glass/glass_bottle_impact_hard"..math.random(1, 3)..".wav" )
-local PhysicSoundHeavy = Sound( "physics/glass/glass_bottle_break"..math.random(1, 2)..".wav" )
-local TrowSoundGarbage = Sound( "" )
-local OpenSoundGarbage = Sound( "" )
+local PhysicSoundLow = Sound( "real_garbage/physic_low_garbage.mp3" )
+local PhysicSoundHeavy = Sound( "real_garbage/physic_heavy_garbage.mp3" )
+local ThrowSoundGarbage = Sound( "real_garbage/throw_garbage.mp3" )
+local OpenSoundGarbage = Sound( "real_garbage/open_garbage.mp3" )
+local HitSoundGarbage = Sound( "real_garbage/hit_garbage.mp3" )
 
 local DoorClass = {
     prop_door_rotating = true,
@@ -91,6 +92,8 @@ function ENT:RemoveTrash()
 
 	self.ActualCapacity = self.ActualCapacity - 1
 	table.remove( self.Trash ) -- Remove the last element.
+
+	sound.Play( OpenSoundGarbage, self:GetPos(), 75, math.random( 50, 160 ) )	
 end
 
 
@@ -119,10 +122,8 @@ end
 function ENT:OnTakeDamage( dmginfo ) -- TODO : Exploser la poubelle si elle prend trop de dégats ?
 	local DmgReceive = dmginfo:GetDamage()
 	self.Health = math.Clamp( self.Health - DmgReceive, 0, 200 )
-	if (DmgReceive >= 30) then
-		sound.Play( PhysicSoundHeavy, self:GetPos(), 75, math.random( 50, 160 ) )	
-	else
-		sound.Play( PhysicSoundLow, self:GetPos(), 75, math.random( 50, 160 ) )	
+	if (DmgReceive >= 5) then
+		sound.Play( HitSoundGarbage, self:GetPos(), 75, math.random( 50, 160 ) )	
 	end
 	if (self.Health <= 0) then self:DestroyGarbage() end
 end
@@ -131,10 +132,8 @@ function ENT:Use(ply)
 	if(!IsValid(ply) or self.ActualCapacity == 0) then return end
 
 	self:RemoveTrash()
-	sound.Play( OpenSoundGarbage, self:GetPos(), 75, math.random( 50, 160 ) )	
 end
 
--- TODO : Faire les sons de jeter en fonction du type de ce qui a été jeté ?
 function ENT:Touch(ent)
 	local CurrentTime = CurTime()
 	if (ent.DelayTrash or self.NextTrash > CurrentTime) then return end
@@ -142,5 +141,5 @@ function ENT:Touch(ent)
 	self.NextTrash = CurrentTime + self.Delay
 
 	self:AddTrash(ent)
-	sound.Play( TrowSoundGarbage, self:GetPos(), 75, math.random( 50, 160 ) )	
+	sound.Play( ThrowSoundGarbage, self:GetPos(), 75, math.random( 50, 160 ) )	
 end
