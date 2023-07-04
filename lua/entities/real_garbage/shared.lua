@@ -23,6 +23,7 @@ ENT.Spawnable = true
 ENT.Category = "Fun"
 
 ENT.MaxCapacity = 10
+ENT.Health = 200
 ENT.ActualCapacity = 0
 ENT.NextTrash = CurTime()
 ENT.Delay = 0.1

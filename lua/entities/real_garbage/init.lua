@@ -35,6 +35,28 @@ local function IsADoor(ent)
 	return false
 end
 
+function ENT:DestroyGarbage()
+	for key, TrashToRemove in ipairs(self.Trash ) do
+		local TrashEnt = ents.Create( TrashToRemove.class )
+		local PosTrash = self:GetPos() + Vector(math.random(1,2), 0, math.random(1,2))
+	
+		TrashEnt:SetPos( PosTrash )
+		TrashEnt:SetModel(TrashToRemove.model)
+		TrashEnt:SetModelName( TrashToRemove.model )
+		TrashEnt:Health(TrashToRemove.health)
+		TrashEnt:Spawn()
+		TrashEnt:Activate()
+	end
+
+	local effectdata = EffectData()
+
+	effectdata:SetOrigin( self:GetPos() )
+	sound.Play( BreakSound, self:GetPos(), 75, math.random( 50, 160 ) )
+	util.Effect( "ThumperDust", effectdata )
+
+	self:Remove()
+end
+
 function ENT:AddTrash(ent)
 	if (ent:IsPlayer() or ent:IsWorld() or IsADoor(ent)) then return end
 
@@ -96,11 +118,13 @@ end
 
 function ENT:OnTakeDamage( dmginfo ) -- TODO : Exploser la poubelle si elle prend trop de dégats ?
 	local DmgReceive = dmginfo:GetDamage()
+	self.Health = math.Clamp( self.Health - DmgReceive, 0, 200 )
 	if (DmgReceive >= 30) then
 		sound.Play( PhysicSoundHeavy, self:GetPos(), 75, math.random( 50, 160 ) )	
 	else
 		sound.Play( PhysicSoundLow, self:GetPos(), 75, math.random( 50, 160 ) )	
 	end
+	if (self.Health <= 0) then self:DestroyGarbage() end
 end
 
 function ENT:Use(ply)
