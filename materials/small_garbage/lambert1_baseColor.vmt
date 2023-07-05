@@ -2,7 +2,7 @@
 {
 	"$basetexture" "small_garbage/lambert1_baseColor"
 	$bumpmap  "small_garbage/lambert1_normal"
-	$envmap "env_cubemap"
+	//$envmap "env_cubemap"
 	$envmaptint [.3 .3 .3]
 	$nocull 1
 }

@@ -41,7 +41,7 @@ function ENT:DestroyGarbage()
 
 	for key, TrashToRemove in ipairs(self.Trash ) do
 		local TrashEnt = ents.Create( TrashToRemove.class )
-		PosTrash = PosTrash + Vector(math.random(-2,2), math.random(-2,2), math.random(1,2))
+		PosTrash = PosTrash + Vector(math.random(-2,2), math.random(-2,2), math.random(40,50))
 
 		TrashEnt:SetPos( PosTrash )
 		TrashEnt:SetModel(TrashToRemove.model)
@@ -49,7 +49,7 @@ function ENT:DestroyGarbage()
 		TrashEnt:Health(TrashToRemove.health)
 		TrashEnt:Spawn()
 		TrashEnt:Activate()
-
+		TrashEnt:GetPhysicsObject():SetVelocity( (self:GetUp()) * 50 )
 		PosTrash = PosTrash + Vector(1, 1, 0)
 	end
 
@@ -86,7 +86,7 @@ function ENT:RemoveTrash()
 	local TrashToRemove = self.Trash[#self.Trash]
 		
 	local TrashEnt = ents.Create( TrashToRemove.class )
-	local PosTrash = self:GetPos() + Vector(math.random(1,2), 0, math.random(1,2))
+	local PosTrash = self:GetPos() + Vector(0, 40, 50)
 
 	TrashEnt:SetPos( PosTrash )
 	TrashEnt:SetModel(TrashToRemove.model)
@@ -94,6 +94,7 @@ function ENT:RemoveTrash()
 	TrashEnt:Health(TrashToRemove.health)
 	TrashEnt:Spawn()
 	TrashEnt:Activate()
+	TrashEnt:GetPhysicsObject():SetVelocity( self:GetUp() * 0.05 )
 	TrashEnt.DelayTrash = true
 	timer.Simple(3, function()
 		if (IsValid(TrashEnt)) then TrashEnt.DelayTrash = nil end
@@ -130,7 +131,7 @@ function ENT:PhysicsCollide( data, physobj )
 	end
 end
 
-function ENT:OnTakeDamage( dmginfo ) -- TODO : Exploser la poubelle si elle prend trop de dégats ?
+function ENT:OnTakeDamage( dmginfo )
 	local DmgReceive = dmginfo:GetDamage()
 	self.CurrentHealth = math.Clamp( self.CurrentHealth - DmgReceive, 0, 200 )
 	if (DmgReceive >= 5) then
