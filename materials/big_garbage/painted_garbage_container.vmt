@@ -1,0 +1,8 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "big_garbage/painted_garbage_container"
+	$bumpmap  "big_garbage/painted_garbage_container_normal"
+	//$envmap "env_cubemap"
+	$envmaptint [.3 .3 .3]
+	$nocull 1
+}
