@@ -64,12 +64,14 @@ end
 
 function ENT:AddTrash(ent)
 	if (ent:IsPlayer() or ent:IsWorld() or IsADoor(ent) or ent:GetClass() == self:GetClass()) then return end
+	if (!REAL_GARBAGE_CONFIG.EnableThrowNPC:GetBool() and ent:IsNPC()) then return end
 
 	table.insert( self.Trash, { -- TODO : Save BodyGroup ?
 		class = ent:GetClass(),
 		model = ent:GetModel(),
 		health = ent:Health()
 	})
+	if (ent:IsNPC()) then self.Trash[#self.Trash].weapon = ent:GetActiveWeapon():GetClass() end
 
 	self.ActualCapacity = self.ActualCapacity + 1
 	ent:Remove()
@@ -94,6 +96,10 @@ function ENT:RemoveTrash()
 	TrashEnt:Health(TrashToRemove.health)
 	TrashEnt:Spawn()
 	TrashEnt:Activate()
+	if(TrashToRemove.weapon) then 
+		TrashEnt:Give( TrashToRemove.weapon )
+		TrashEnt:SelectWeapon( TrashToRemove.weapon )
+	end
 	TrashEnt:GetPhysicsObject():SetVelocity( self:GetUp() * 0.05 )
 	TrashEnt.DelayTrash = true
 	timer.Simple(3, function()
