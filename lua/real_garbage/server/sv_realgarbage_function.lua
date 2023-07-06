@@ -4,8 +4,8 @@ local function IsADoor(ent)
 	return false
 end
 
-local function CreateTrash(garbage)
-	local TrashToRemove = garbage.Trash[#garbage.Trash]
+local function CreateTrash(garbage, trash)
+	local TrashToRemove = trash or garbage.Trash[#garbage.Trash]
 		
 	local TrashEnt = ents.Create( TrashToRemove.class )
 	local PosTrash = garbage:GetPos() + Vector(0, 40, 50)
@@ -34,13 +34,7 @@ function real_garbage.DestroyGarbage(garbage)
 		local TrashEnt = ents.Create( TrashToRemove.class )
 		PosTrash = PosTrash + Vector(math.random(-2,2), math.random(-2,2), math.random(40,50))
 
-		TrashEnt:SetPos( PosTrash )
-		TrashEnt:SetModel(TrashToRemove.model)
-		TrashEnt:SetModelName( TrashToRemove.model )
-		TrashEnt:Health(TrashToRemove.health)
-		TrashEnt:Spawn()
-		TrashEnt:Activate()
-		TrashEnt:GetPhysicsObject():SetVelocity( (garbage:GetUp()) * 50 )
+		CreateTrash(garbage, TrashToRemove)
 		PosTrash = PosTrash + Vector(1, 1, 0)
 	end
 
