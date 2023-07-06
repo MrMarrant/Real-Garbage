@@ -42,7 +42,7 @@ function ENT:OnTakeDamage( dmginfo )
 	local DmgReceive = dmginfo:GetDamage()
 	self.CurrentHealth = math.Clamp( self.CurrentHealth - DmgReceive, 0, 200 )
 	if (DmgReceive >= 5) then
-		sound.Play( REAL_GARBAGE_CONFIG.HitSoundGarbage, self:GetPos(), 75, math.random( 50, 160 ) )	
+		sound.Play( REAL_GARBAGE_CONFIG.HitSoundGarbage, self:GetPos(), 75, math.random( 50, 150 ) )	
 	end
 	if (self.CurrentHealth <= 0) then real_garbage.DestroyGarbage(self) end
 end

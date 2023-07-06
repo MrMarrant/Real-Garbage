@@ -14,66 +14,13 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+-- TODO : Modifier les sons pour la grosse poubelle.
+
 AddCSLuaFile("shared.lua")
 include("shared.lua")
 
--- TODO : Trouver les sons.
-local PhysicSoundLow = Sound( "physics/glass/glass_bottle_impact_hard"..math.random(1, 3)..".wav" )
-local PhysicSoundHeavy = Sound( "physics/glass/glass_bottle_break"..math.random(1, 2)..".wav" )
-local TrowSoundGarbage = Sound( "" )
-local OpenSoundGarbage = Sound( "" )
-
-local DoorClass = {
-    prop_door_rotating = true,
-    func_door = true,
-    func_door_rotating = true
-}
-
-local function IsADoor(ent)
-	local EntClass = ent:GetClass()
-	if (DoorClass[EntClass]) then return true end
-	return false
-end
-
-function ENT:AddTrash(ent)
-	if (ent:IsPlayer() or ent:IsWorld() or IsADoor(ent)) then return end
-
-	table.insert( self.Trash, { -- TODO : Save BodyGroup ?
-		class = ent:GetClass(),
-		model = ent:GetModel(),
-		health = ent:Health()
-	})
-
-	self.ActualCapacity = self.ActualCapacity + 1
-	ent:Remove()
-end
-
-function ENT:RemoveTrash()
-	if (table.IsEmpty( self.Trash )) then return end
-
-	local TrashToRemove = self.Trash[#self.Trash]
-		
-	local TrashEnt = ents.Create( TrashToRemove.class )
-	local PosTrash = self:GetPos() + Vector(math.random(1,2), 0, math.random(1,2))
-
-	TrashEnt:SetPos( PosTrash )
-	TrashEnt:SetModel(TrashToRemove.model)
-	TrashEnt:SetModelName( TrashToRemove.model )
-	TrashEnt:Health(TrashToRemove.health)
-	TrashEnt:Spawn()
-	TrashEnt:Activate()
-	TrashEnt.DelayTrash = true
-	timer.Simple(3, function()
-		if (IsValid(TrashEnt)) then TrashEnt.DelayTrash = nil end
-	end)
-
-	self.ActualCapacity = self.ActualCapacity - 1
-	table.remove( self.Trash ) -- Remove the last element.
-end
-
-
 function ENT:Initialize()
-	self:SetModel( "models/props_junk/TrashBin01a.mdl" )
+	self:SetModel( "models/big_garbage/big_garbage.mdl" )
 	self:RebuildPhysics()
 end
 
@@ -87,35 +34,40 @@ end
 
 function ENT:PhysicsCollide( data, physobj )
 	if ( data.Speed > 250 and data.DeltaTime > 0.01) then
-		sound.Play( PhysicSoundHeavy, self:GetPos(), 75, math.random( 50, 160 ) )	
+		sound.Play( REAL_GARBAGE_CONFIG.PhysicSoundHeavy, self:GetPos(), 75, math.random( 50, 160 ) )	
 	elseif (data.Speed > 50 and data.DeltaTime > 0.01) then
-		sound.Play( PhysicSoundLow, self:GetPos(), 75, math.random( 50, 160 ) )	
+		sound.Play( REAL_GARBAGE_CONFIG.PhysicSoundLow, self:GetPos(), 75, math.random( 50, 160 ) )	
 	end
 end
 
-function ENT:OnTakeDamage( dmginfo ) -- TODO : Exploser la poubelle si elle prend trop de dégats ?
+function ENT:OnTakeDamage( dmginfo )
 	local DmgReceive = dmginfo:GetDamage()
-	if (DmgReceive >= 30) then
-		sound.Play( PhysicSoundHeavy, self:GetPos(), 75, math.random( 50, 160 ) )	
-	else
-		sound.Play( PhysicSoundLow, self:GetPos(), 75, math.random( 50, 160 ) )	
+	self.CurrentHealth = math.Clamp( self.CurrentHealth - DmgReceive, 0, 300 )
+	if (DmgReceive >= 5) then
+		sound.Play( REAL_GARBAGE_CONFIG.HitSoundGarbage, self:GetPos(), 75, math.random( 50, 160 ) )	
 	end
+	if (self.CurrentHealth <= 0) then real_garbage.DestroyGarbage(self) end
 end
 
 function ENT:Use(ply)
 	if(!IsValid(ply) or self.ActualCapacity == 0) then return end
 
-	self:RemoveTrash()
-	sound.Play( OpenSoundGarbage, self:GetPos(), 75, math.random( 50, 160 ) )	
+	real_garbage.RemoveTrash(self)
 end
 
--- TODO : Faire les sons de jeter en fonction du type de ce qui a été jeté ?
 function ENT:Touch(ent)
 	local CurrentTime = CurTime()
 	if (ent.DelayTrash or self.NextTrash > CurrentTime) then return end
 	if (!IsValid(ent) or self.ActualCapacity == self.MaxCapacity) then return end
 	self.NextTrash = CurrentTime + self.Delay
 
-	self:AddTrash(ent)
-	sound.Play( TrowSoundGarbage, self:GetPos(), 75, math.random( 50, 160 ) )	
+	real_garbage.AddTrash(self, ent)
+	sound.Play( REAL_GARBAGE_CONFIG.ThrowSoundGarbage, self:GetPos(), 75, math.random( 50, 160 ) )	
+end
+
+function ENT:Think()
+    if ( SERVER ) then
+        self:NextThink( CurTime() )
+        return true 
+    end
 end

@@ -18,11 +18,13 @@
 ENT.Type = "anim"
 ENT.Base = "base_gmodentity"
 ENT.Author = "MrMarrant"
-ENT.PrintName = "Big Real Garbage"
+ENT.PrintName = "Big Garbage"
 ENT.Spawnable = true
 ENT.Category = "Fun"
+ENT.AutomaticFrameAdvance = true
 
 ENT.MaxCapacity = 20
+ENT.CurrentHealth = 300
 ENT.ActualCapacity = 0
 ENT.NextTrash = CurTime()
 ENT.Delay = 0.1
