@@ -29,7 +29,7 @@ function ENT:RebuildPhysics( )
 	self:SetMoveType(MOVETYPE_VPHYSICS)
 	self:SetSolid( SOLID_VPHYSICS ) 
 	self:SetUseType(SIMPLE_USE)
-	self:SetAngles( Angle(0, 180, 0) )
+	self:SetAngles( Angle(0, 90, 0) )
 	self:PhysWake()
 end
 
