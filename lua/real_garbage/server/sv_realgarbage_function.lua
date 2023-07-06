@@ -4,6 +4,29 @@ local function IsADoor(ent)
 	return false
 end
 
+local function CreateTrash(garbage)
+	local TrashToRemove = garbage.Trash[#garbage.Trash]
+		
+	local TrashEnt = ents.Create( TrashToRemove.class )
+	local PosTrash = garbage:GetPos() + Vector(0, 40, 50)
+
+	TrashEnt:SetPos( PosTrash )
+	TrashEnt:SetModel(TrashToRemove.model)
+	TrashEnt:SetModelName( TrashToRemove.model )
+	TrashEnt:Health(TrashToRemove.health)
+	TrashEnt:Spawn()
+	TrashEnt:Activate()
+	if(TrashToRemove.weapon) then 
+		TrashEnt:Give( TrashToRemove.weapon )
+		TrashEnt:SelectWeapon( TrashToRemove.weapon )
+	end
+	TrashEnt:GetPhysicsObject():SetVelocity( garbage:GetUp() * 0.05 )
+	TrashEnt.DelayTrash = true
+	timer.Simple(3, function()
+		if (IsValid(TrashEnt)) then TrashEnt.DelayTrash = nil end
+	end)
+end
+
 function real_garbage.DestroyGarbage(garbage)
 	local PosTrash = garbage:GetPos()
 
@@ -53,27 +76,7 @@ end
 function real_garbage.RemoveTrash(garbage)
 	if (table.IsEmpty( garbage.Trash )) then return end
 
-	local TrashToRemove = garbage.Trash[#garbage.Trash]
-		
-	local TrashEnt = ents.Create( TrashToRemove.class )
-	local PosTrash = garbage:GetPos() + Vector(0, 40, 50)
-
-	TrashEnt:SetPos( PosTrash )
-	TrashEnt:SetModel(TrashToRemove.model)
-	TrashEnt:SetModelName( TrashToRemove.model )
-	TrashEnt:Health(TrashToRemove.health)
-	TrashEnt:Spawn()
-	TrashEnt:Activate()
-	if(TrashToRemove.weapon) then 
-		TrashEnt:Give( TrashToRemove.weapon )
-		TrashEnt:SelectWeapon( TrashToRemove.weapon )
-	end
-	TrashEnt:GetPhysicsObject():SetVelocity( garbage:GetUp() * 0.05 )
-	TrashEnt.DelayTrash = true
-	timer.Simple(3, function()
-		if (IsValid(TrashEnt)) then TrashEnt.DelayTrash = nil end
-	end)
-
+	CreateTrash(garbage)
 	garbage.ActualCapacity = garbage.ActualCapacity - 1
 	table.remove( garbage.Trash ) -- Remove the last element.
 	garbage:ResetSequence( "throw" )
