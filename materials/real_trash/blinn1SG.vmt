@@ -1,0 +1,8 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "real_trash/blinn1SG"
+	$bumpmap  "real_trash/blinn1SG_normal"
+	//$envmap "env_cubemap"
+	$envmaptint [.3 .3 .3]
+	$nocull 1
+}
