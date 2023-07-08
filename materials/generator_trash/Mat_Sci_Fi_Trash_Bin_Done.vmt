@@ -1,0 +1,8 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "generator_trash/Mat_Sci_Fi_Trash_Bin_Done"
+	$bumpmap  "generator_trash/Mat_Sci_Fi_Trash_Bin_normal"
+	//$envmap "env_cubemap"
+	$envmaptint [.3 .3 .3]
+	$nocull 1
+}
