@@ -27,11 +27,12 @@ function ENT:GenerateTrash(ent)
 
 	timer.Simple(self:SequenceDuration(), function()
 		if(!self:IsValid()) then return end
-
+		self:SetSkin( 2 )
 		self:EmitSound( REAL_GARBAGE_CONFIG.GeneratorRunning, 75, math.random( 100, 110 ) )
 		timer.Simple(5, function()
 			if(!self:IsValid()) then return end
 			self:ManageRecepticle(true)
+			self:SetSkin( 3 )
 
 			timer.Simple(self:SequenceDuration(), function()
 				if(!self:IsValid()) then return end
@@ -58,6 +59,7 @@ function ENT:ManageRecepticle(fullSequence)
 
 		self.InAction = false
 		self.IsOpen = !self.IsOpen
+		if (!self.HasTrash) then self:SetSkin( self.IsOpen and 1 or 0 ) end
 		if (fullSequence) then self:ManageRecepticle() end
 	end)
 end

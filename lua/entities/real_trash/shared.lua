@@ -20,4 +20,3 @@ ENT.Base = "base_gmodentity"
 ENT.Author = "MrMarrant"
 ENT.PrintName = "Trash"
 ENT.Spawnable = false
-ENT.Category = "Fun"

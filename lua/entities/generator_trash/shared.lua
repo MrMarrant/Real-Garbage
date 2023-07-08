@@ -20,7 +20,7 @@ ENT.Base = "base_gmodentity"
 ENT.Author = "MrMarrant"
 ENT.PrintName = "Generator Trash"
 ENT.Spawnable = true
-ENT.Category = "Fun"
+ENT.Category = "Real Garbage"
 ENT.AutomaticFrameAdvance = true
 
 ENT.IsOpen = false
