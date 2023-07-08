@@ -6,6 +6,8 @@ REAL_GARBAGE_CONFIG.HitSoundGarbage = Sound( "real_garbage/hit_garbage.mp3" )
 REAL_GARBAGE_CONFIG.GeneratorRunning = Sound( "real_garbage/generator_running.mp3" )
 REAL_GARBAGE_CONFIG.OpenRecepticle = Sound( "real_garbage/open_recepticle.mp3" )
 REAL_GARBAGE_CONFIG.CloseRecepticle = Sound( "real_garbage/close_recepticle.mp3" )
+REAL_GARBAGE_CONFIG.HardImpactTrash = Sound( "real_garbage/hard_impact_trash.mp3" )
+REAL_GARBAGE_CONFIG.SoftImpactTrash = Sound( "real_garbage/soft_impact_trash.mp3" )
 
 REAL_GARBAGE_CONFIG.GarbageClassAvailable = {
     big_real_garbage = true,

@@ -33,9 +33,11 @@ function ENT:RebuildPhysics( )
 end
 
 function ENT:PhysicsCollide( data, physobj )
-	if ( data.Speed > 250 and data.DeltaTime > 0.01) then
-		self:EmitSound( REAL_GARBAGE_CONFIG.PhysicSoundHeavy, 75, math.random( 50, 160 ) )	
-	elseif (data.Speed > 50 and data.DeltaTime > 0.01) then
-		self:EmitSound( REAL_GARBAGE_CONFIG.PhysicSoundLow, 75, math.random( 50, 160 ) )	
+	if data.DeltaTime > 0.2 then
+		if data.Speed > 250 then
+			self:EmitSound( REAL_GARBAGE_CONFIG.HardImpactTrash, 75, math.random( 50, 160 ) )	
+		else
+			self:EmitSound( REAL_GARBAGE_CONFIG.SoftImpactTrash, 75 , math.random( 100, 110 ) )	
+		end
 	end
 end

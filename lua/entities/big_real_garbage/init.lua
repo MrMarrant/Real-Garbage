@@ -33,19 +33,18 @@ function ENT:RebuildPhysics( )
 end
 
 function ENT:PhysicsCollide( data, physobj )
-	if ( data.Speed > 250 and data.DeltaTime > 0.01) then
-		self:EmitSound( REAL_GARBAGE_CONFIG.PhysicSoundHeavy, 75, math.random( 50, 160 ) )	
-	elseif (data.Speed > 50 and data.DeltaTime > 0.01) then
-		self:EmitSound( REAL_GARBAGE_CONFIG.PhysicSoundLow, 75, math.random( 50, 160 ) )	
+	if data.DeltaTime > 0.2 then
+		if data.Speed > 250 then
+			self:EmitSound( "physics/metal/metal_grate_impact_hard3.wav", 75, math.random( 50, 160 ) )	
+		else
+			self:EmitSound( "physics/metal/metal_grate_impact_soft3.wav", 75, math.random( 50, 160 ) )	
+		end
 	end
 end
 
 function ENT:OnTakeDamage( dmginfo )
 	local DmgReceive = dmginfo:GetDamage()
 	self.CurrentHealth = math.Clamp( self.CurrentHealth - DmgReceive, 0, 300 )
-	if (DmgReceive >= 5) then
-		self:EmitSound( REAL_GARBAGE_CONFIG.HitSoundGarbage, 75, math.random( 50, 160 ) )	
-	end
 	if (self.CurrentHealth <= 0) then real_garbage.DestroyGarbage(self) end
 end
 

@@ -28,7 +28,7 @@ function ENT:GenerateTrash(ent)
 	timer.Simple(self:SequenceDuration(), function()
 		if(!self:IsValid()) then return end
 
-		self:EmitSound( REAL_GARBAGE_CONFIG.GeneratorRunning, 75, math.random( 90, 110 ) )
+		self:EmitSound( REAL_GARBAGE_CONFIG.GeneratorRunning, 75, math.random( 100, 110 ) )
 		timer.Simple(5, function()
 			if(!self:IsValid()) then return end
 			self:ManageRecepticle(true)
@@ -76,10 +76,12 @@ function ENT:RebuildPhysics( )
 end
 
 function ENT:PhysicsCollide( data, physobj )
-	if ( data.Speed > 250 and data.DeltaTime > 0.01) then
-		self:EmitSound( REAL_GARBAGE_CONFIG.PhysicSoundHeavy, 75, math.random( 50, 160 ) )	
-	elseif (data.Speed > 50 and data.DeltaTime > 0.01) then
-		self:EmitSound( REAL_GARBAGE_CONFIG.PhysicSoundLow, 75, math.random( 50, 160 ) )	
+	if data.DeltaTime > 0.2 then
+		if data.Speed > 250 then
+			self:EmitSound( "physics/metal/metal_computer_impact_hard".. math.random(1, 3) ..".wav", 75, math.random( 50, 160 ) )	
+		else
+			self:EmitSound( "physics/metal/metal_computer_impact_soft".. math.random(1, 3) ..".wav", 75, math.random( 50, 160 ) )	
+		end
 	end
 end
 
@@ -94,6 +96,7 @@ function ENT:Touch(ent)
 
 	if (self.NextTrash > CurrentTime or !self.IsOpen or !IsValid(ent) or ent:IsPlayer()) then return end
 	if(real_garbage.IsADoor(ent) or ent:GetClass() == "real_trash") then return end
+	if (!REAL_GARBAGE_CONFIG.EnableThrowNPC:GetBool() and ent:IsNPC()) then return end
 
 	self.NextTrash = CurrentTime + self.Delay
 	self:GenerateTrash(ent)

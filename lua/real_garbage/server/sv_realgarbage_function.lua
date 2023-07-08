@@ -42,7 +42,8 @@ function real_garbage.DestroyGarbage(garbage)
 
 	effectdata:SetOrigin( garbage:GetPos() )
 	garbage:EmitSound( REAL_GARBAGE_CONFIG.OpenSoundGarbage, 75, 255 )
-	util.Effect( "ThumperDust", effectdata )
+	util.Effect( "GlassImpact", effectdata )
+	util.Effect( "WheelDust", effectdata )
 
 	garbage:Remove()
 end
