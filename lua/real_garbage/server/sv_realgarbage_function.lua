@@ -1,9 +1,3 @@
-local function IsADoor(ent)
-	local EntClass = ent:GetClass()
-	if (REAL_GARBAGE_CONFIG.DoorClass[EntClass]) then return true end
-	return false
-end
-
 local function CreateTrash(garbage, trash)
 	local TrashToRemove = trash or garbage.Trash[#garbage.Trash]
 		
@@ -27,6 +21,12 @@ local function CreateTrash(garbage, trash)
 	end)
 end
 
+function real_garbage.IsADoor(ent)
+	local EntClass = ent:GetClass()
+	if (REAL_GARBAGE_CONFIG.DoorClass[EntClass]) then return true end
+	return false
+end
+
 function real_garbage.DestroyGarbage(garbage)
 	local PosTrash = garbage:GetPos()
 
@@ -41,14 +41,14 @@ function real_garbage.DestroyGarbage(garbage)
 	local effectdata = EffectData()
 
 	effectdata:SetOrigin( garbage:GetPos() )
-	sound.Play( REAL_GARBAGE_CONFIG.OpenSoundGarbage, garbage:GetPos(), 75, 255 )
+	garbage:EmitSound( REAL_GARBAGE_CONFIG.OpenSoundGarbage, 75, 255 )
 	util.Effect( "ThumperDust", effectdata )
 
 	garbage:Remove()
 end
 
 function real_garbage.AddTrash(garbage, ent)
-	if (ent:IsPlayer() or ent:IsWorld() or IsADoor(ent) or REAL_GARBAGE_CONFIG.GarbageClassAvailable[ent:GetClass()]) then return end
+	if (ent:IsPlayer() or ent:IsWorld() or real_garbage.IsADoor(ent) or REAL_GARBAGE_CONFIG.GarbageClassAvailable[ent:GetClass()]) then return end
 	if (!REAL_GARBAGE_CONFIG.EnableThrowNPC:GetBool() and ent:IsNPC()) then return end
 
 	table.insert( garbage.Trash, { -- TODO : Save BodyGroup ?
@@ -77,5 +77,5 @@ function real_garbage.RemoveTrash(garbage)
 	timer.Simple(garbage:SequenceDuration(), function()
 		if (IsValid(garbage)) then garbage:ResetSequence( "idle" )  end
 	end)
-	sound.Play( REAL_GARBAGE_CONFIG.OpenSoundGarbage, garbage:GetPos(), 75, math.random( 50, 160 ) )	
+	garbage:EmitSound( REAL_GARBAGE_CONFIG.OpenSoundGarbage, 75, math.random( 50, 160 ) )	
 end

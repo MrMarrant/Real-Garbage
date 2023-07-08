@@ -19,8 +19,51 @@
 AddCSLuaFile("shared.lua")
 include("shared.lua")
 
+function ENT:GenerateTrash(ent)
+	self.HasTrash = true
+	ent:Remove()
+
+	self:ManageRecepticle()
+
+	timer.Simple(self:SequenceDuration(), function()
+		if(!self:IsValid()) then return end
+
+		self:EmitSound( REAL_GARBAGE_CONFIG.GeneratorRunning, 75, math.random( 90, 110 ) )
+		timer.Simple(5, function()
+			if(!self:IsValid()) then return end
+			self:ManageRecepticle(true)
+
+			timer.Simple(self:SequenceDuration(), function()
+				if(!self:IsValid()) then return end
+				local TrashEnt = ents.Create( "real_trash" )
+				local PosTrash = self:GetPos() + Vector(0, 40, 50)
+
+				TrashEnt:SetPos( self:GetPos() + Vector(0, 40, 50) )
+				TrashEnt:Spawn()
+				TrashEnt:Activate()
+
+				self.HasTrash = false
+			end)
+		end)
+	end)
+end
+
+function ENT:ManageRecepticle(fullSequence)
+	self.InAction = true
+	self:ResetSequence( self.IsOpen and "close" or "open" )
+	self:EmitSound( self.IsOpen and REAL_GARBAGE_CONFIG.CloseRecepticle or REAL_GARBAGE_CONFIG.OpenRecepticle, 75)
+		
+	timer.Simple(self:SequenceDuration(), function()
+		if(!self:IsValid()) then return end
+
+		self.InAction = false
+		self.IsOpen = !self.IsOpen
+		if (fullSequence) then self:ManageRecepticle() end
+	end)
+end
+
 function ENT:Initialize()
-	self:SetModel( "models/big_garbage/big_garbage.mdl" )
+	self:SetModel( "models/generator_trash/generator_trash.mdl" )
 	self:RebuildPhysics()
 end
 
@@ -40,29 +83,20 @@ function ENT:PhysicsCollide( data, physobj )
 	end
 end
 
-function ENT:OnTakeDamage( dmginfo )
-	local DmgReceive = dmginfo:GetDamage()
-	self.CurrentHealth = math.Clamp( self.CurrentHealth - DmgReceive, 0, 300 )
-	if (DmgReceive >= 5) then
-		self:EmitSound( REAL_GARBAGE_CONFIG.HitSoundGarbage, 75, math.random( 50, 160 ) )	
-	end
-	if (self.CurrentHealth <= 0) then real_garbage.DestroyGarbage(self) end
-end
-
 function ENT:Use(ply)
-	if(!IsValid(ply) or self.ActualCapacity == 0) then return end
+	if(!IsValid(ply) or self.HasTrash or self.InAction) then return end
 
-	real_garbage.RemoveTrash(self)
+	self:ManageRecepticle()
 end
 
 function ENT:Touch(ent)
 	local CurrentTime = CurTime()
-	if (ent.DelayTrash or self.NextTrash > CurrentTime) then return end
-	if (!IsValid(ent) or self.ActualCapacity == self.MaxCapacity) then return end
-	self.NextTrash = CurrentTime + self.Delay
 
-	real_garbage.AddTrash(self, ent)
-	self:EmitSound( REAL_GARBAGE_CONFIG.ThrowSoundGarbage, 75, math.random( 50, 160 ) )	
+	if (self.NextTrash > CurrentTime or !self.IsOpen or !IsValid(ent) or ent:IsPlayer()) then return end
+	if(real_garbage.IsADoor(ent) or ent:GetClass() == "real_trash") then return end
+
+	self.NextTrash = CurrentTime + self.Delay
+	self:GenerateTrash(ent)
 end
 
 function ENT:Think()

@@ -14,11 +14,13 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+-- TODO : Modifier les sons
+
 AddCSLuaFile("shared.lua")
 include("shared.lua")
 
 function ENT:Initialize()
-	self:SetModel( "models/small_garbage/small_garbage.mdl" )
+	self:SetModel( "models/real_trash/real_trash.mdl" )
 	self:RebuildPhysics()
 end
 
@@ -36,36 +38,4 @@ function ENT:PhysicsCollide( data, physobj )
 	elseif (data.Speed > 50 and data.DeltaTime > 0.01) then
 		self:EmitSound( REAL_GARBAGE_CONFIG.PhysicSoundLow, 75, math.random( 50, 160 ) )	
 	end
-end
-
-function ENT:OnTakeDamage( dmginfo )
-	local DmgReceive = dmginfo:GetDamage()
-	self.CurrentHealth = math.Clamp( self.CurrentHealth - DmgReceive, 0, 200 )
-	if (DmgReceive >= 5) then
-		self:EmitSound( REAL_GARBAGE_CONFIG.HitSoundGarbage, 75, math.random( 50, 150 ) )	
-	end
-	if (self.CurrentHealth <= 0) then real_garbage.DestroyGarbage(self) end
-end
-
-function ENT:Use(ply)
-	if(!IsValid(ply) or self.ActualCapacity == 0) then return end
-
-	real_garbage.RemoveTrash(self)
-end
-
-function ENT:Touch(ent)
-	local CurrentTime = CurTime()
-	if (ent.DelayTrash or self.NextTrash > CurrentTime) then return end
-	if (!IsValid(ent) or self.ActualCapacity == self.MaxCapacity) then return end
-	self.NextTrash = CurrentTime + self.Delay
-
-	real_garbage.AddTrash(self, ent)
-	self:EmitSound( REAL_GARBAGE_CONFIG.ThrowSoundGarbage, 75, math.random( 50, 160 ) )	
-end
-
-function ENT:Think()
-    if ( SERVER ) then
-        self:NextThink( CurTime() )
-        return true 
-    end
 end
