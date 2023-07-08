@@ -18,14 +18,13 @@
 ENT.Type = "anim"
 ENT.Base = "base_gmodentity"
 ENT.Author = "MrMarrant"
-ENT.PrintName = "Garbage"
+ENT.PrintName = "Generator Trash"
 ENT.Spawnable = true
 ENT.Category = "Fun"
 ENT.AutomaticFrameAdvance = true
 
-ENT.MaxCapacity = 10
-ENT.CurrentHealth = 10
-ENT.ActualCapacity = 0
+ENT.IsOpen = false
+ENT.HasTrash = false
 ENT.NextTrash = CurTime()
 ENT.Delay = 0.1
-ENT.Trash = {}
+ENT.InAction = false

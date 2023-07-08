@@ -33,19 +33,18 @@ function ENT:RebuildPhysics( )
 end
 
 function ENT:PhysicsCollide( data, physobj )
-	if ( data.Speed > 250 and data.DeltaTime > 0.01) then
-		sound.Play( REAL_GARBAGE_CONFIG.PhysicSoundHeavy, self:GetPos(), 75, math.random( 50, 160 ) )	
-	elseif (data.Speed > 50 and data.DeltaTime > 0.01) then
-		sound.Play( REAL_GARBAGE_CONFIG.PhysicSoundLow, self:GetPos(), 75, math.random( 50, 160 ) )	
+	if data.DeltaTime > 0.2 then
+		if data.Speed > 250 then
+			self:EmitSound( "physics/metal/metal_grate_impact_hard3.wav", 75, math.random( 50, 160 ) )	
+		else
+			self:EmitSound( "physics/metal/metal_grate_impact_soft3.wav", 75, math.random( 50, 160 ) )	
+		end
 	end
 end
 
 function ENT:OnTakeDamage( dmginfo )
 	local DmgReceive = dmginfo:GetDamage()
 	self.CurrentHealth = math.Clamp( self.CurrentHealth - DmgReceive, 0, 300 )
-	if (DmgReceive >= 5) then
-		sound.Play( REAL_GARBAGE_CONFIG.HitSoundGarbage, self:GetPos(), 75, math.random( 50, 160 ) )	
-	end
 	if (self.CurrentHealth <= 0) then real_garbage.DestroyGarbage(self) end
 end
 
@@ -62,7 +61,7 @@ function ENT:Touch(ent)
 	self.NextTrash = CurrentTime + self.Delay
 
 	real_garbage.AddTrash(self, ent)
-	sound.Play( REAL_GARBAGE_CONFIG.ThrowSoundGarbage, self:GetPos(), 75, math.random( 50, 160 ) )	
+	self:EmitSound( REAL_GARBAGE_CONFIG.ThrowSoundGarbage, 75, math.random( 50, 160 ) )	
 end
 
 function ENT:Think()

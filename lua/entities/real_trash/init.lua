@@ -14,18 +14,30 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+-- TODO : Modifier les sons
 
-ENT.Type = "anim"
-ENT.Base = "base_gmodentity"
-ENT.Author = "MrMarrant"
-ENT.PrintName = "Garbage"
-ENT.Spawnable = true
-ENT.Category = "Fun"
-ENT.AutomaticFrameAdvance = true
+AddCSLuaFile("shared.lua")
+include("shared.lua")
 
-ENT.MaxCapacity = 10
-ENT.CurrentHealth = 10
-ENT.ActualCapacity = 0
-ENT.NextTrash = CurTime()
-ENT.Delay = 0.1
-ENT.Trash = {}
+function ENT:Initialize()
+	self:SetModel( "models/real_trash/real_trash.mdl" )
+	self:RebuildPhysics()
+end
+
+function ENT:RebuildPhysics( )
+	self:PhysicsInit( SOLID_VPHYSICS ) 
+	self:SetMoveType(MOVETYPE_VPHYSICS)
+	self:SetSolid( SOLID_VPHYSICS ) 
+	self:SetUseType(SIMPLE_USE)
+	self:PhysWake()
+end
+
+function ENT:PhysicsCollide( data, physobj )
+	if data.DeltaTime > 0.2 then
+		if data.Speed > 250 then
+			self:EmitSound( REAL_GARBAGE_CONFIG.HardImpactTrash, 75, math.random( 50, 160 ) )	
+		else
+			self:EmitSound( REAL_GARBAGE_CONFIG.SoftImpactTrash, 75 , math.random( 100, 110 ) )	
+		end
+	end
+end
