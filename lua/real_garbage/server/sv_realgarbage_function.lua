@@ -67,6 +67,7 @@ end
 function real_garbage.AddTrash(garbage, ent)
 	if (ent:IsPlayer() or ent:IsWorld() or real_garbage.IsADoor(ent) or REAL_GARBAGE_CONFIG.GarbageClassAvailable[ent:GetClass()]) then return end
 	if (!REAL_GARBAGE_CONFIG.EnableThrowNPC:GetBool() and ent:IsNPC()) then return end
+	if (REAL_GARBAGE_CONFIG.AllowOnlyTrashBag:GetBool() and ent:GetClass() != "real_trash") then return end
 
 	table.insert( garbage.Trash, { -- TODO : Save BodyGroup ?
 		class = ent:GetClass(),

@@ -20,6 +20,7 @@ real_garbage = {}
 REAL_GARBAGE_CONFIG = {}
 
 REAL_GARBAGE_CONFIG.EnableThrowNPC = CreateConVar( "Enable_Throw_NPC_Trash", 1, FCVAR_PROTECTED, "Enable or not to throw NPC intop the garbage.", 0, 1 )
+REAL_GARBAGE_CONFIG.AllowOnlyTrashBag = CreateConVar( "Allow_Only_Trash_Bag", 0, FCVAR_PROTECTED, "Option for only allowing trash bag stocked by garbage entities.", 0, 1 )
 REAL_GARBAGE_CONFIG.RootFolder = "real_garbage/"
 
 /*
