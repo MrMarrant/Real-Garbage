@@ -24,7 +24,7 @@ ENT.Category = "Real Garbage"
 ENT.AutomaticFrameAdvance = true
 
 ENT.MaxCapacity = 10
-ENT.CurrentHealth = 10
+ENT.CurrentHealth = 150
 ENT.ActualCapacity = 0
 ENT.NextTrash = CurTime()
 ENT.Delay = 0.1
