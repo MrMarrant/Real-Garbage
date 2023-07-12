@@ -95,7 +95,7 @@ function ENT:Touch(ent)
 	local CurrentTime = CurTime()
 
 	if (self.NextTrash > CurrentTime or !self.IsOpen or !IsValid(ent) or ent:IsPlayer()) then return end
-	if(real_garbage.IsADoor(ent) or ent:GetClass() == "real_trash") then return end
+	if (real_garbage.IsADoor(ent) or ent:GetClass() == "real_trash" or REAL_GARBAGE_CONFIG.GarbageClassAvailable[ent:GetClass()]) then return end
 	if (!REAL_GARBAGE_CONFIG.EnableThrowNPC:GetBool() and ent:IsNPC()) then return end
 
 	self.NextTrash = CurrentTime + self.Delay
