@@ -23,7 +23,6 @@ ENT.Spawnable = true
 ENT.Category = "Real Garbage"
 ENT.AutomaticFrameAdvance = true
 
-ENT.MaxCapacity = 20
 ENT.CurrentHealth = 300
 ENT.ActualCapacity = 0
 ENT.NextTrash = CurTime()

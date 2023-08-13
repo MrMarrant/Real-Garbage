@@ -58,7 +58,7 @@ end
 function ENT:Touch(ent)
 	local CurrentTime = CurTime()
 	if (ent.DelayTrash or self.NextTrash > CurrentTime) then return end
-	if (!IsValid(ent) or self.ActualCapacity == self.MaxCapacity) then return end
+	if (!IsValid(ent) or self.ActualCapacity == REAL_GARBAGE_CONFIG.SizeRealGarbage:GetInt()) then return end
 	self.NextTrash = CurrentTime + self.Delay
 
 	real_garbage.AddTrash(self, ent)

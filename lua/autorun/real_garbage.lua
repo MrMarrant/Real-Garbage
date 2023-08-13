@@ -21,6 +21,8 @@ REAL_GARBAGE_CONFIG = {}
 
 REAL_GARBAGE_CONFIG.EnableThrowNPC = CreateConVar( "Enable_Throw_NPC_Trash", 1, {FCVAR_PROTECTED, FCVAR_ARCHIVE}, "Enable or not to throw NPC intop the garbage.", 0, 1 )
 REAL_GARBAGE_CONFIG.AllowOnlyTrashBag = CreateConVar( "Allow_Only_Trash_Bag", 0, {FCVAR_PROTECTED, FCVAR_ARCHIVE}, "Option for only allowing trash bag stocked by garbage entities.", 0, 1 )
+REAL_GARBAGE_CONFIG.SizeRealGarbage = CreateConVar( "SizeRealGarbage", 10, {FCVAR_PROTECTED, FCVAR_ARCHIVE}, "Size of the real garbage.", 1, 50 )
+REAL_GARBAGE_CONFIG.SizeBigGarbage = CreateConVar( "SizeBigGarbage", 20, {FCVAR_PROTECTED, FCVAR_ARCHIVE}, "Size of the big garbage.", 1, 50 )
 REAL_GARBAGE_CONFIG.RootFolder = "real_garbage/"
 
 /*
